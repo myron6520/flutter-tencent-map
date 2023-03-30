@@ -1,5 +1,6 @@
 import Flutter
 import QMapKit
+import CoreFoundation
 
 class TencentMapFactory: NSObject, FlutterPlatformViewFactory {
     let registrar: FlutterPluginRegistrar
@@ -16,6 +17,8 @@ class TencentMapFactory: NSObject, FlutterPlatformViewFactory {
 class MapView: NSObject, FlutterPlatformView, QMapViewDelegate {
     let mapView: QMapView
     let api: _TencentMapApi
+    
+    static let id:String = "pointAnnotation"
 
     init(_ registrar: FlutterPluginRegistrar) {
         mapView = QMapView()
@@ -27,5 +30,17 @@ class MapView: NSObject, FlutterPlatformView, QMapViewDelegate {
 
     func view() -> UIView {
         mapView
+    }
+    func mapView(_ mapView: QMapView!, viewFor annotation: QAnnotation!) -> QAnnotationView? {
+        if annotation is QPointAnnotation{
+            var pinView = mapView.dequeueReusableAnnotationView(withIdentifier: MapView.id) as? QPinAnnotationView
+            if let pinView = pinView{
+                return pinView
+            }
+            pinView = QPinAnnotationView(annotation: annotation, reuseIdentifier: MapView.id)
+            pinView?.canShowCallout = false
+            return pinView
+        }
+        return Optional.none
     }
 }
