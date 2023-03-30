@@ -83,9 +83,16 @@ class _TencentMapApi: NSObject, TencentMapApi {
         return ""
     }
 
+    var annotationInfo:[QPointAnnotation:MarkerOptions] = [:];
     func add(_ options: MarkerOptions, error _: AutoreleasingUnsafeMutablePointer<FlutterError?>) -> String? {
+        annotationInfo.keys.forEach { it in
+            mapView.removeAnnotation(it)
+        }
+        annotationInfo = [:];
+        
         let pointAnnotation = QPointAnnotation()
         pointAnnotation.coordinate = CLLocationCoordinate2DMake(options.position.latitude!.doubleValue, options.position.longitude!.doubleValue)
+        annotationInfo[pointAnnotation] = options;
         mapView.addAnnotation(pointAnnotation)
         return ""
     }
